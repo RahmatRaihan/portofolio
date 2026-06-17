@@ -135,28 +135,29 @@ const skills = [
 
 const TOTAL_FRAMES = 240;
 
-// Preload all frames
+// Preload frames progressively
 function useFrameImages() {
   const [images, setImages] = useState<HTMLImageElement[]>([]);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const imgs: HTMLImageElement[] = [];
-    let loadedCount = 0;
 
     for (let i = 1; i <= TOTAL_FRAMES; i++) {
       const img = new Image();
       const padded = String(i).padStart(3, '0');
       img.src = `/animation-frames/ezgif-frame-${padded}.png`;
-      img.onload = () => {
-        loadedCount++;
-        if (loadedCount === TOTAL_FRAMES) {
-          setImages(imgs);
+      
+      // Mark as loaded as soon as the first frame is ready
+      if (i === 1) {
+        img.onload = () => {
           setLoaded(true);
-        }
-      };
+        };
+      }
       imgs.push(img);
     }
+    // Set the array immediately so canvas can access img objects
+    setImages(imgs);
   }, []);
 
   return { images, loaded };
@@ -195,10 +196,13 @@ function ScrollAnimation({ scrollContainerRef, onOpacityChange, isDark }: { scro
     const canvas = canvasRef.current;
     if (!canvas || !images[frameIndex]) return;
 
+    const img = images[frameIndex];
+    // Skip rendering if this specific frame is not fully downloaded yet
+    if (!img.complete || img.naturalWidth === 0) return;
+
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     if (!ctx) return;
 
-    const img = images[frameIndex];
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
 
