@@ -1521,7 +1521,7 @@ export default function App() {
                 <div className="flex flex-col gap-6">
                   <div>
                     <span className={`block text-[10px] uppercase tracking-[0.2em] font-bold ${isDark ? 'text-white' : 'text-[#001f3f]'} opacity-80 mb-2`}>{t.contact.emailLabel}</span>
-                    <a href="mailto:contact@rahmatraihanb.com" className={`text-lg md:text-xl font-medium ${textWhiteBlack} hover:text-[#001f3f] transition-colors`}>contact@rahmatraihanb.com</a>
+                    <a href="mailto:rahmatraihanb@gmail.com" className={`text-lg md:text-xl font-medium ${textWhiteBlack} hover:text-[#001f3f] transition-colors`}>rahmatraihanb@gmail.com</a>
                   </div>
                   <div>
                     <span className={`block text-[10px] uppercase tracking-[0.2em] font-bold ${isDark ? 'text-white' : 'text-[#001f3f]'} opacity-80 mb-2`}>{t.contact.phoneLabel}</span>
@@ -1556,8 +1556,8 @@ export default function App() {
 
           <div className="flex flex-col items-start gap-2">
             <span className="text-[10px] uppercase tracking-[0.3em] text-[#001f3f] font-bold">{t.footer.connect}</span>
-            <a href="mailto:contact@rahmatraihanb.com" className={`font-inter text-sm md:text-base ${textGraySoft} hover:${textWhiteBlack} transition-colors duration-300`}>
-              contact@rahmatraihanb.com
+            <a href="mailto:rahmatraihanb@gmail.com" className={`font-inter text-sm md:text-base ${textGraySoft} hover:${textWhiteBlack} transition-colors duration-300`}>
+              rahmatraihanb@gmail.com
             </a>
           </div>
 
@@ -1568,7 +1568,7 @@ export default function App() {
             <a href="https://github.com/RahmatRaihan" target="_blank" rel="noreferrer" className={`hover:${textWhiteBlack} transition-all flex items-center gap-1.5`}>
               <GithubIcon className="w-3.5 h-3.5" /> GitHub
             </a>
-            <a href="mailto:contact@rahmatraihanb.com" className={`hover:${textWhiteBlack} transition-all flex items-center gap-1.5`}>
+            <a href="mailto:rahmatraihanb@gmail.com" className={`hover:${textWhiteBlack} transition-all flex items-center gap-1.5`}>
               <MailIcon className="w-3.5 h-3.5" /> Email
             </a>
           </div>
