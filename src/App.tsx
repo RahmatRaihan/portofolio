@@ -2,6 +2,7 @@ import { Menu, Sun, Moon } from 'lucide-react';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, useScroll, useSpring, useTransform, MotionValue, useMotionTemplate, useMotionValueEvent } from 'motion/react';
 import Lenis from '@studio-freight/lenis';
+import { GLSLHills } from './components/ui/glsl-hills';
 
 const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
@@ -146,8 +147,8 @@ function useFrameImages() {
     for (let i = 1; i <= TOTAL_FRAMES; i++) {
       const img = new Image();
       const padded = String(i).padStart(3, '0');
-      img.src = `/animation-frames/ezgif-frame-${padded}.png`;
-      
+      img.src = `/animation-frames/ezgif-frame-${padded}.webp`;
+
       // Mark as loaded as soon as the first frame is ready
       if (i === 1) {
         img.onload = () => {
@@ -432,7 +433,12 @@ const translations = {
         {
           title: 'Rekap SPL PT BAI',
           desc: 'Aplikasi berbasis web untuk merekap Surat Perintah Lembur (SPL) Operator di PT. Borneo Alumina Indonesia.',
-          link: 'https://sploperator.vercel.app/'
+          link: ''
+        },
+        {
+          title: 'Absensi Operator PT BAI',
+          desc: 'Aplikasi berbasis web untuk merekapitulasi data absensi operator di lingkungan PT. Borneo Alumina Indonesia.',
+          link: ''
         },
         {
           title: 'Aplikasi POS Rs Rubini',
@@ -443,6 +449,16 @@ const translations = {
           title: 'Inventory System',
           desc: 'Sistem inventory management dengan barcode scanner dan reporting data barang.',
           link: ''
+        },
+        {
+          title: 'INSKYLXSTR',
+          desc: 'Website e-commerce untuk jual beli pakaian dan fashion terkini dengan antarmuka yang elegan.',
+          link: 'https://www.inskylxstr.com/'
+        },
+        {
+          title: 'SIMBAJA IAIN',
+          desc: 'Sistem Informasi Manajemen Barang dan Jasa untuk rekapitulasi data pengadaan di lingkungan IAIN Pontianak.',
+          link: 'https://simbajaiain.com/'
         }
       ]
     },
@@ -536,6 +552,11 @@ const translations = {
           link: 'https://sploperator.vercel.app/'
         },
         {
+          title: 'Absensi Operator PT BAI',
+          desc: 'A web-based application to recapitulate operator attendance data at PT. Borneo Alumina Indonesia.',
+          link: ''
+        },
+        {
           title: 'Aplikasi POS Rs Rubini',
           desc: 'Cashier application for the canteen of RS Rubini Mempawah.',
           link: ''
@@ -544,6 +565,16 @@ const translations = {
           title: 'Inventory System',
           desc: 'Inventory management system with barcode scanner and data reporting.',
           link: ''
+        },
+        {
+          title: 'INSKYLXSTR',
+          desc: 'An e-commerce website for buying and selling the latest clothing and fashion with an elegant interface.',
+          link: 'https://www.inskylxstr.com/'
+        },
+        {
+          title: 'SIMBAJA IAIN',
+          desc: 'Management Information System for Goods and Services to recapitulate procurement data at IAIN Pontianak.',
+          link: 'https://simbajaiain.com/'
         }
       ]
     },
@@ -597,8 +628,17 @@ function ProjectCard({ item, index, totalCards, progress, t, isDark, borderLight
   // Use a spring to make the scroll tracking buttery smooth
   const smoothProgress = useSpring(progress as MotionValue<number>, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
-  // Center index of the stack to calculate offsets
+  // Center index of the stack to calculate offsets (mobile uses this)
   const midIndex = (totalCards - 1) / 2;
+
+  // Desktop Grid Logic (Max 4 per row)
+  const cardsPerRow = 4;
+  const row = Math.floor(index / cardsPerRow);
+  const col = index % cardsPerRow;
+  // Always use cardsPerRow for midCol so columns align vertically
+  const midCol = (cardsPerRow - 1) / 2;
+  const totalRows = Math.ceil(totalCards / cardsPerRow);
+  const midRow = (totalRows - 1) / 2;
 
   // Stacking logic: Card 0 is top (highest z-index), last card is bottom (lowest z-index).
   const zIndex = (totalCards * 10) - index * 10;
@@ -612,9 +652,9 @@ function ProjectCard({ item, index, totalCards, progress, t, isDark, borderLight
   }, []);
 
   // Spread positions fanned out
-  const targetRotation = isMobile ? (index - midIndex) * 3 : (index - midIndex) * 5;
-  const targetXVal = isMobile ? 0 : (index - midIndex) * 340;
-  const targetYVal = isMobile ? (index - midIndex) * 130 : 0;
+  const targetRotation = 0;
+  const targetXVal = isMobile ? 0 : (col - midCol) * 260;
+  const targetYVal = isMobile ? (index - midIndex) * 130 : (row - midRow) * 300 + 40;
 
   // Scroll mapping
   const rotate = useTransform(smoothProgress, [0, 0.2, 1], [0, 0, targetRotation]);
@@ -645,31 +685,31 @@ function ProjectCard({ item, index, totalCards, progress, t, isDark, borderLight
         zIndex: (totalCards * 10) + 10
       }}
       transition={{ type: "spring", stiffness: 300, damping: 20, backdropFilter: { duration: 0.3 } }}
-      className={`group absolute w-full max-w-[300px] md:max-w-[380px] h-[340px] md:h-[520px] ${cardColor} rounded-3xl shadow-2xl border ${borderLightClass} hover:${borderClass} p-8 md:p-10 flex flex-col justify-between transition-colors duration-500 overflow-hidden`}
+      className={`group absolute w-full max-w-[300px] md:max-w-[240px] h-[340px] md:h-[280px] ${cardColor} rounded-3xl shadow-2xl border ${borderLightClass} hover:${borderClass} p-5 md:p-5 flex flex-col justify-between transition-colors duration-500 overflow-hidden`}
     >
       {/* Decorative Inner Border / Glass Reflection */}
       <div className={`absolute inset-0 border ${borderFaintClass} opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none m-2`}></div>
 
       <div className="relative z-10">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-3">
           <span className={`text-[10px] uppercase tracking-[0.2em] font-bold ${textColor} opacity-60`}>{t.portfolio.projLabel} 0{index + 1}</span>
           <span className={`w-1.5 h-1.5 ${isDark ? 'bg-white/20' : 'bg-black/20'} rounded-sm`}></span>
         </div>
 
-        <h3 className={`text-2xl md:text-3xl font-bold mt-4 mb-4 uppercase tracking-wider ${textColor}`}>
+        <h3 className={`text-xl md:text-xl font-bold mt-2 mb-2 uppercase tracking-wider ${textColor}`}>
           {item.title}
         </h3>
-        <p className={`font-inter ${textMutedColor} text-sm md:text-base leading-relaxed mt-4 opacity-90`}>
+        <p className={`font-inter ${textMutedColor} text-xs md:text-xs leading-relaxed mt-2 opacity-90 line-clamp-4`}>
           {item.desc}
         </p>
       </div>
 
       {hasLink ? (
-        <a href={item.link} target="_blank" rel="noreferrer" className={`relative z-10 mt-12 flex justify-between items-center border-t ${borderLightClass} pt-6 opacity-50 hover:opacity-100 transition-opacity duration-500`}>
+        <a href={item.link} target="_blank" rel="noreferrer" className={`relative z-10 mt-auto flex justify-between items-center border-t ${borderLightClass} pt-4 opacity-50 hover:opacity-100 transition-opacity duration-500`}>
           {buttonContent}
         </a>
       ) : (
-        <div className={`relative z-10 mt-12 flex justify-between items-center border-t ${borderLightClass} pt-6 opacity-30 cursor-not-allowed`}>
+        <div className={`relative z-10 mt-auto flex justify-between items-center border-t ${borderLightClass} pt-4 opacity-30 cursor-not-allowed`}>
           {buttonContent}
         </div>
       )}
@@ -1044,6 +1084,11 @@ export default function App() {
 
       {/* Hero Section */}
       <section id="hero" data-section="hero" ref={heroRef} className="min-h-[85vh] md:min-h-screen flex flex-col relative p-4 pb-12 md:p-12 overflow-x-hidden">
+        {/* GLSL Hills Background */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-60">
+          <GLSLHills width="100%" height="100%" />
+        </div>
+
         {/* Top Navigation */}
         <motion.header
           layout
