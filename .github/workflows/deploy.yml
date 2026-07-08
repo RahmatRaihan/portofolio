@@ -24,12 +24,9 @@ jobs:
           npm install
           npm run build
 
-      - name: Deploy to VPS via SSH/SFTP
-        uses: easingthemes/ssh-deploy@main
-        with:
-          PASSWORD: ${{ secrets.VPS_PASSWORD }}
-          ARGS: "-rlgoDzvc --delete"
-          SOURCE: "dist/"
-          REMOTE_HOST: ${{ secrets.VPS_IP }}
-          REMOTE_USER: root
-          TARGET: "/var/www/portofolio/dist"
+      - name: Deploy to VPS via Rsync (Password Auth)
+        env:
+          SSHPASS: ${{ secrets.VPS_PASSWORD }}
+        run: |
+          sudo apt-get update && sudo apt-get install -y sshpass rsync
+          sshpass -e rsync -rlgoDzvc --delete -e "ssh -o StrictHostKeyChecking=no" dist/ root@${{ secrets.VPS_IP }}:/var/www/portofolio/dist
